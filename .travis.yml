@@ -1,9 +1,11 @@
+language: generic 
+sudo: required
 services:
-  - docker
+    - docker 
 
 branches:
   only:
-    - master
+    - dev
 
 before_install:
   - docker build -t hello-world .
@@ -13,3 +15,15 @@ script:
   - docker ps | grep hello-world
   - curl --fail localhost:8000
   - curl --fail -I localhost:8000
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "hello-world"
+  env: "hello-world-env"
+  bucket_name: "test-b-ci-travis"
+  bucket_path: "hello-world"
+  on:
+    branch: dev
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
